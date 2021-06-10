@@ -1,1 +1,4 @@
 trained_models
+__pycache__
+/FCOS
+/.idea

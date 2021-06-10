@@ -75,11 +75,11 @@ def main():
     test_dataset = CharadesSTA(args, split='test')
     train_dataloader = DataLoader(
         train_dataset, batch_size=args.batch_size,
-        shuffle=True, collate_fn=collate_data, num_workers=8, pin_memory=True
+        shuffle=True, collate_fn=collate_data, num_workers=0, pin_memory=True
     )
     test_dataloader = DataLoader(
         test_dataset, batch_size=args.test_batch_size,
-        shuffle=False, collate_fn=collate_data, num_workers=8, pin_memory=True
+        shuffle=False, collate_fn=collate_data, num_workers=0, pin_memory=True
     )
     vocab_size = len(word2idx)
 
@@ -97,6 +97,7 @@ def main():
         main_model.query_encoder.embedding.weight.data.copy_(glove_init(word2idx))
 
     main_model = nn.DataParallel(main_model).cuda()
+
 
     if args.resume:
         if os.path.isfile(args.resume):

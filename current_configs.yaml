@@ -20,8 +20,8 @@ feature_type: C3D
 props_file_path: ./data/dataset/Charades/Charades_MAN_32_props.txt
 glove_weights: ./data/glove_weights
 n_epoch: 50
-batch_size: 32
-test_batch_size: 16
+batch_size: 4
+test_batch_size: 4
 lr: 0.001
 loss_weights: 0.5
 clip_gradient: 0.5

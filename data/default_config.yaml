@@ -6,7 +6,7 @@ Charades:
     ft_window_size: 32
     ft_overlap: 0.75
   C3D:
-    feature_root: /home/datasets/Charades/C3D_unit16_overlap0.5_merged/
+    feature_root: /data/yangming/datasets/C3D_unit16_overlap0.5_merged
     feature_dim: 4096
     ft_window_size: 16
     ft_overlap: 0.5

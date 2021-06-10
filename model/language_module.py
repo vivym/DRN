@@ -39,7 +39,7 @@ class QueryEncoder(nn.Module):
 
         outputs = []
         query_embedding = self.embedding(query_tokens)
-        query_embedding = pack_padded_sequence(query_embedding, query_length, batch_first=True)
+        query_embedding = pack_padded_sequence(query_embedding, query_length.cpu(), batch_first=True)
         self.biLSTM.flatten_parameters()
         # TODO: h_0, c_0 is zero here
         output, _ = self.biLSTM(query_embedding)
