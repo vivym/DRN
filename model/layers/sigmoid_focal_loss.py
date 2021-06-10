@@ -10,9 +10,6 @@ class SigmoidFocalLoss(nn.Module):
         self.alpha = alpha
 
     def forward(self, logits, targets):
-        print(logits)
-        print(targets)
-        print(targets.sum())
         loss = sigmoid_focal_loss(logits, targets[:, None].to(dtype=logits.dtype), self.alpha, self.gamma)
         return loss.sum()
 
