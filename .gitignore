@@ -2,3 +2,4 @@ trained_models
 __pycache__
 /FCOS
 /.idea
+.DS_Store
