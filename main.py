@@ -216,6 +216,18 @@ def train_epoch(model, train_dataloader, optimizer, epoch):
         data_time.update(time.time() - end)
         bs = props_features.size(0)
 
+        """
+        print("-" * 40)
+        print("vid_names:", vid_names)
+        print("props_start_end:", props_start_end, props_start_end.shape, props_start_end.dtype)    # [8, 32, 2]
+        print("props_features:", props_features, props_features.shape, props_features.dtype)        # [8, 32, 4096]
+        print("gt_start_end:", gt_start_end, gt_start_end.shape, gt_start_end.dtype)                # [8, 2]
+        print("query_tokens:", query_tokens, query_tokens.shape, query_tokens.dtype)                # [8, 8]
+        print("query_len:", query_len, query_len.shape, query_len.dtype)                            # [8]
+        print("props_num:", props_num, props_num.shape, props_num.dtype)                            # [8]
+        print("num_frames:", num_frames, num_frames.shape, num_frames.dtype)                        # [8]
+        """
+
         box_lists, loss_dict = model(
             query_tokens, query_len, props_features, props_start_end, gt_start_end, props_num, num_frames
         )
