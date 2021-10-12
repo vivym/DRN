@@ -18,12 +18,13 @@ import os
 import random
 from model.main_model import mainModel
 # from VGG_dataset import CharadesSTA, collate_data
-from dataset import CharadesSTA, collate_data
+# from dataset import CharadesSTA, collate_data
 # from TACoS_dataset import TACoS, collate_data
 from tensorboardX import SummaryWriter
 import os
 from tqdm import tqdm
 from utils.evaluate_utils import PostProcessRunner
+from sparse_tokens import SparseTokensDataset, get_glove_weights, get_word_to_id, collate
 
 
 best_top1 = 0
@@ -70,16 +71,16 @@ def main():
     # word2idx = json.load(open('./data/dataset/TACoS/TACoS_word2id_glove_lower.json', 'r'))
     # train_dataset = TACoS(args, split='train')
     # test_dataset = TACoS(args, split='test')
-    word2idx = json.load(open('./data/dataset/Charades/Charades_word2id.json', 'r'))
-    train_dataset = CharadesSTA(args, split='train')
-    test_dataset = CharadesSTA(args, split='test')
+    word2idx = get_word_to_id()
+    train_dataset = SparseTokensDataset(root_dir="/home/shenenya/projs/datasets/pool", num_sampled_frames=32)
+    test_dataset = SparseTokensDataset(root_dir="/home/shenenya/projs/datasets/pool", num_sampled_frames=32)
     train_dataloader = DataLoader(
         train_dataset, batch_size=args.batch_size,
-        shuffle=True, collate_fn=collate_data, num_workers=0, pin_memory=True
+        shuffle=True, collate_fn=collate, num_workers=8, pin_memory=True
     )
     test_dataloader = DataLoader(
         test_dataset, batch_size=args.test_batch_size,
-        shuffle=False, collate_fn=collate_data, num_workers=0, pin_memory=True
+        shuffle=False, collate_fn=collate, num_workers=8, pin_memory=True
     )
     vocab_size = len(word2idx)
 
@@ -89,12 +90,15 @@ def main():
     main_model = mainModel(vocab_size, args, hidden_dim=512, embed_dim=300,
                            bidirection=True, graph_node_features=1024)
 
+    """
     if os.path.exists(args.glove_weights):
         logger.info("Loading glove weights")
         main_model.query_encoder.embedding.weight.data.copy_(torch.load(args.glove_weights))
     else:
         logger.info("Generating glove weights")
         main_model.query_encoder.embedding.weight.data.copy_(glove_init(word2idx))
+    """
+    main_model.query_encoder.embedding.weight.data.copy_(get_glove_weights())
 
     main_model = nn.DataParallel(main_model).cuda()
 
@@ -144,11 +148,18 @@ def main():
 
         train_loss = train_epoch(main_model, train_dataloader, optimizer, epoch)
 
-        if (epoch + 1) % args.eval_freq == 0 or epoch == args.n_epoch - 1:
-
+        if (epoch + 1) % args.eval_freq == 0 or epoch == n_epoch - 1:
+            """
             val_loss, topks, accuracy_topks = validate_epoch(
                 main_model, test_dataloader, epoch, word2idx, False
             )
+            """
+            print("save_checkpoint")
+            save_checkpoint(
+                {"epoch": epoch + 1, "state_dict": main_model.state_dict()},
+                True, epoch=epoch, top1=0, top5=0
+            )
+            """
 
             for ind, topk in enumerate(topks):
                 writer.add_scalar('test_result/Recall@top{}'.format(topk), accuracy_topks[ind]*100, epoch)
@@ -194,6 +205,7 @@ def main():
                 "Current best top5: R@1: {:.2f}, R@5: {:.2f}, epoch: {} \n".format(
                     best_top5_top1, best_top5, best_top5_epoch)
             )
+            """
 
 
 def train_epoch(model, train_dataloader, optimizer, epoch):
@@ -235,7 +247,11 @@ def train_epoch(model, train_dataloader, optimizer, epoch):
         if args.is_second_stage:
             loss = loss_dict['loss_iou']
         else:
-            loss = sum(loss for loss in loss_dict.values())
+            try:
+                loss = sum(loss for loss in loss_dict.values())
+            except Exception as e:
+                print(loss_dict)
+                raise e
 
         losses.update(loss.item(), bs)
         cls_losses.update(loss_dict["loss_cls"].item(), bs)
@@ -424,7 +440,8 @@ def evaluate(trained_model, test_dataloader, word2idx, save_results=True):
             for i in range(bs):
                 vid_name = vid_names[i]
                 query_length = query_len[i]
-                query = (' ').join(list(map(lambda x: id2word[x.item()], query_tokens[i, :query_length])))
+                # print(query_length, query_tokens[i], i)
+                query = (' ').join(list(map(lambda x: id2word[x.item()] if x.item() != 0 else "", query_tokens[i, :query_length])))
                 gt = gt_start_end[i].numpy().tolist()
                 valid_props_num = props_num[i]
 

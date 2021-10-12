@@ -19,7 +19,7 @@ class Recorder(object):
             os.remove(self.readme)
         if not os.path.isdir(self.code_path):
             os.mkdir(self.code_path)
-        self.copy_code(dst=self.code_path)
+        # self.copy_code(dst=self.code_path)
         """if os.path.isdir(self.weight_folder):
             shutil.rmtree(self.weight_folder, ignore_errors=True)
         os.mkdir(self.weight_folder)

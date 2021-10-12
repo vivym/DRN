@@ -48,6 +48,7 @@ def get_configs(dataset):
 
 def get_and_save_args(parser):
     args = parser.parse_args()
+    print(args)
     dataset = args.dataset
 
     default_config = yaml.load(open('./data/default_config.yaml', 'r'), Loader=yaml.RoundTripLoader)[dataset]

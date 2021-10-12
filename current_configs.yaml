@@ -13,12 +13,14 @@ I3D:
     feature_dim: 2048
     ft_window_size: 64
     ft_overlap: 0.875
+SparseTokens:
+    feature_dim: 256
 
 # ======================================= Learning configs ==================================
-dataset: Charades
-feature_type: C3D
+dataset: SparseTokens
+feature_type: SparseTokens
 props_file_path: ./data/dataset/Charades/Charades_MAN_32_props.txt
-glove_weights: ./data/glove_weights
+glove_weights: ./glove_weights
 n_epoch: 50
 batch_size: 4
 test_batch_size: 4

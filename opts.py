@@ -3,9 +3,9 @@ import argparse
 parser = argparse.ArgumentParser(description="Language Driven Video Temporal Localization implemented in pyTorch")
 
 # =========================== Data Configs ==============================
-parser.add_argument('dataset', type=str, default='Charades')
+parser.add_argument('dataset', type=str, default='VidSTG')
 parser.add_argument('--props_file_path', type=str)
-parser.add_argument('--feature_type', choices=['C3D', 'I3D', 'MFnet'])
+parser.add_argument('--feature_type', choices=['C3D', 'I3D', 'MFnet', "SparseTokens"])
 # =========================== Learning Configs ============================
 parser.add_argument('--n_epoch', type=int)
 parser.add_argument('-b', '--batch_size', type=int)

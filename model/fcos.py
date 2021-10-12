@@ -100,11 +100,12 @@ class FCOSHead(torch.nn.Module):
             )))
             mix_feature = self.mix_fc(torch.cat([cls_tower, box_tower], dim=1))
             iou_scores.append(self.iou_scores(mix_feature))
-            print("-" * 20)
-            print("logits:", logits[-1].shape)
-            print("bbox_reg:", bbox_reg[-1].shape)
-            print("iou_scores:", iou_scores[-1].shape)
-            print("-" * 20)
+            if False:
+                print("-" * 20)
+                print("logits:", logits[-1].shape)
+                print("bbox_reg:", bbox_reg[-1].shape)
+                print("iou_scores:", iou_scores[-1].shape)
+                print("-" * 20)
             # iou_scores.append(self.iou_scores(box_tower))
             # innerness.append(self.innerness(box_tower))
         return logits, bbox_reg, centerness, iou_scores
@@ -143,10 +144,11 @@ class FCOSModule(torch.nn.Module):
             losses (dict[Tensor]): the losses for the model during training. During
                 testing, it is an empty dict.
         """
-        print("features:")
-        for x in features:
-            print("\t", x.shape)
-        print("targets:", targets.shape)
+        if False:
+            print("features:")
+            for x in features:
+                print("\t", x.shape)
+            print("targets:", targets.shape)
         box_cls, box_regression, centerness, iou_scores = self.head(features)
         # features = [torch.rand((32, 512, 100, 128)).cuda(), torch.rand((32, 512, 50, 64)).cuda(),
         #             torch.rand((32, 512, 25, 32)).cuda()]
@@ -207,7 +209,8 @@ class FCOSModule(torch.nn.Module):
                 t, self.fpn_strides[level],
                 feature.device
             )
-            print("locations_per_level:", locations_per_level.shape)
+            if False:
+                print("locations_per_level:", locations_per_level.shape)
             locations.append(locations_per_level)
         return locations
 

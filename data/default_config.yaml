@@ -16,11 +16,15 @@ Charades:
     ft_window_size: 64
     ft_overlap: 0.875
 
+VidSTG:
+  SparseTokens:
+    feature_dim: 256
+
 # ======================================= Learning configs ==================================
-  dataset: Charades
-  feature_type: MFnet
-  props_file_path: ./data/dataset/Charades/Charades_MAN_32_props.txt
-  glove_weights: ./data/glove_weights
+  dataset: VidSTG
+  feature_type: SparseTokens
+  # props_file_path: ./data/dataset/Charades/Charades_MAN_32_props.txt
+  glove_weights: ./glove_weights
   n_epoch: 50
   batch_size: 32
   test_batch_size: 16

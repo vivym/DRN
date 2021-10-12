@@ -192,7 +192,7 @@ class FCOSLossComputation(object):
             pos_iou_pred = iou_pred[iou_pos_ind]
             self.total_points.append((pos_iou_pred, pos_iou_target))
             if iou_pos_ind.sum().item() == 0:
-                iou_loss = torch.tensor([0])
+                iou_loss = torch.tensor([0], device=pos_iou_pred.device)
             else:
                 iou_loss = self.iou_loss_func(pos_iou_pred, pos_iou_target)
 
